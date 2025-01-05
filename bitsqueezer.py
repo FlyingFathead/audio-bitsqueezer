@@ -54,6 +54,7 @@ from pydub.silence import detect_silence
 TRIM_SILENCE = True     # If True, leading/trailing silence is trimmed
 MAXIMIZE     = True     # If True, we apply a simple "normalize" to a dB level
 MAXIMIZE_LEVEL = 0.0    # Default target loudness in dBFS (0.0 => full scale)
+STRETCH_4BIT = True     # If True, we apply nibble distribution stretching to [0..15]
 # -------------------------
 
 def check_ffmpeg_installed():
@@ -62,7 +63,7 @@ def check_ffmpeg_installed():
     Exits if not found or if calling `ffmpeg -version` fails.
     """
     try:
-        proc = subprocess.run(
+        subprocess.run(
             ["ffmpeg", "-version"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -115,7 +116,6 @@ def do_maximize(audio, target_dbfs=0.0):
     its peak amplitude is at 'target_dbfs'.
     Example: target_dbfs=0.0 => peaks at 0 dBFS (full scale).
     """
-    # If audio is silent or already at/above target, .apply_gain may do the trick
     change_in_dB = target_dbfs - audio.max_dBFS
     return audio.apply_gain(change_in_dB)
 
@@ -123,6 +123,7 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bi
     """
     Convert 'audio' to 4-bit raw nibble data, pack 2 nibbles/byte,
     then write to 'out_filename'.
+
     If stretch_4bit=True, we also rescale the nibble distribution to [0..15].
     """
     # ensure mono
@@ -145,10 +146,9 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bi
     # quantize each sample to 4 bits
     nibbles = []
     for s in samples:
-        # clamp
-        if s < -32768: 
+        if s < -32768:
             s = -32768
-        elif s > 32767: 
+        elif s > 32767:
             s = 32767
         shifted = s + 32768  # [0..65535]
         val_4bit = (shifted >> 12) & 0x0F  # [0..15]
@@ -162,8 +162,7 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bi
             span = nmax - nmin
             for i in range(len(nibbles)):
                 x = nibbles[i] - nmin
-                # scale up to 0..15
-                x = int((x * 15) / span + 0.5)
+                x = int((x * 15) / span + 0.5)  # scale up to 0..15
                 nibbles[i] = max(0, min(15, x))
 
     # pack 2 nibbles per byte
@@ -231,7 +230,7 @@ def main():
     args = parser.parse_args()
 
     # Overwrite the global defaults if user provided flags:
-    global TRIM_SILENCE, MAXIMIZE, MAXIMIZE_LEVEL
+    global TRIM_SILENCE, MAXIMIZE, MAXIMIZE_LEVEL, STRETCH_4BIT
 
     if args.no_trim:
         TRIM_SILENCE = False
@@ -240,13 +239,17 @@ def main():
     if args.maximize_level is not None:
         MAXIMIZE_LEVEL = args.maximize_level
 
+    # Overwrite STRETCH_4BIT
+    if args.no_stretch_4bit:
+        STRETCH_4BIT = False
+
     if not os.path.isfile(args.infile):
         print(f"ERROR: cannot find input file '{args.infile}'")
         sys.exit(1)
 
     # Decide on output filename
     if not args.out:
-        base, ext = os.path.splitext(args.infile)
+        base, _ = os.path.splitext(args.infile)
         if args.mode == "4bit":
             out_name = f"{base}_4bit_{args.rate}hz.raw"
         else:
@@ -269,12 +272,10 @@ def main():
     if MAXIMIZE:
         audio = do_maximize(audio, target_dbfs=MAXIMIZE_LEVEL)
 
-    # 3) Then produce either 4-bit raw or MSSIAH WAV
+    # 3) Produce either 4-bit raw or MSSIAH WAV
     if args.mode == "4bit":
-        # by default we do nibble stretching, disable if user says --no-stretch-4bit
-        stretch_4bit = not args.no_stretch_4bit
         write_4bit_raw(audio, out_name, sample_rate=args.rate, max_sec=args.max,
-                       stretch_4bit=stretch_4bit)
+                       stretch_4bit=STRETCH_4BIT)
     else:
         write_mssiah_wav(audio, out_name, max_sec=args.max)
 
