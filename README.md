@@ -140,8 +140,6 @@ At least for now, use it for whatever. If you adapt it somewhere, a quick nod ba
 
 **Note:** I'm in no way affiliated with the MSSIAH cartridge or any of their other hardware projects. Please refer to their manuals and customer support if you have any issues with your MSSIAH hardware.
 
-Have fun!
-
 ## Contributing & Contact
 
 Pull requests, bug reports, and suggestions welcome. If you want advanced dithering, different sample packing, or feature expansions, open an issue or PR.
