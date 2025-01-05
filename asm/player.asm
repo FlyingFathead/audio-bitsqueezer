@@ -36,17 +36,18 @@ start:
     ;--------------------------------------------------
     ; Setup CIA #2 Timer => ~8 kHz
     ; For NTSC ~1.02MHz => 1022727 / 8000 ~ 128 => $80
-    lda #$80
-    sta $dd04     ; Timer A LSB
+    ; For PAL ~0.985 => ~123 ($7B)
+    lda #$80           ; ~8 kHz (NTSC); try #$7B if using PAL
+    sta $dd04          ; Timer A LSB
     lda #0
-    sta $dd05     ; Timer A MSB
+    sta $dd05          ; Timer A MSB
 
-    ; turn off pending interrupts on CIA2
+    ; Turn off pending interrupts on CIA2
     lda #$7F
     sta $dd0d
     lda $dd0d
 
-    ; enable Timer A interrupt (bit0=TimerA, bit7=1 => enable)
+    ; Enable Timer A interrupt (bit0=TimerA, bit7=1 => enable)
     lda #$81
     sta $dd0d
 
@@ -56,11 +57,17 @@ start:
 
     cli
 mainLoop:
-    rts    ; returns to BASIC prompt if no loop
+    jmp mainLoop  ; Keep the CPU in a loop (so we don't return to BASIC)
 
 ;--------------------------------------------------
 ; NMI routine (fires ~8k times/s). We'll push regs, do the sample routine
 nmiRoutine:
+    ; DEBUG: Toggle bit7 of screen at $0400 so you see flickering if NMI is firing
+    lda $0400
+    eor #$80
+    sta $0400
+    ; END DEBUG
+
     pha
     txa
     pha
@@ -160,14 +167,15 @@ clrSid:
 ; nibbleIndex = $FC
 ; currentByte = $FD
 
-!zone 0       ; or you can just do direct eqm
+!zone 0
 
-samplePtr  = $fa      ; 2 bytes => $fa, $fb
-nibbleIndex= $fc      ; 1 byte => $fc
-currentByte= $fd      ; 1 byte => $fd
+samplePtr   = $fa      ; 2 bytes => $fa, $fb
+nibbleIndex = $fc      ; 1 byte => $fc
+currentByte = $fd      ; 1 byte => $fd
 
 ;--------------------------------------------------
 ; 4) Label for appended data
 * = *          ; keep program counter the same
+
 sampleData:
 ; raw 4-bit data appended externally

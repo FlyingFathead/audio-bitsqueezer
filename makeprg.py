@@ -9,7 +9,8 @@ MAX_PRG_SIZE = 40000
 # The minimal pre-assembled player file you want to merge with.
 # This file must have a 2-byte load address and the code that
 # references the label where the sample is appended.
-PLAYER_BIN = "player.bin"
+# PLAYER_BIN = "player.bin"
+PLAYER_BIN = "./prg/holy_sample.prg"
 
 def main():
     if len(sys.argv) < 2:
@@ -40,6 +41,15 @@ def main():
     # Read the raw 4-bit sample data
     with open(input_raw, "rb") as f:
         sample_data = f.read()
+
+    # Add a sentinel 0 => ensures we don't read 0 as first sample unless it truly is.
+    if len(sample_data) > 0:
+        # only if there's data
+        sample_data += b"\x00"
+    else:
+        print("WARNING: .raw file is empty, will stop playback immediately")
+
+    # final_data = player_data + sample_data
 
     # Quick size check
     combined_size = len(player_data) + len(sample_data)
