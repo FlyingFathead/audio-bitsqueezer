@@ -35,7 +35,7 @@ cd bitsqueezer
 pip install pydub
 ```
 
-Make sure FFmpeg is installed and accessible.
+**NOTE:** Make sure FFmpeg is installed and accessible. this program will not work without it.
 
 ## Usage
 
