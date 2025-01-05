@@ -2,7 +2,7 @@
 """
 bitsqueezer.py
 ==============
-(Official repository at: https://github.com/FlyingFathead/bitsqueezer)
+(Official repository at: https://github.com/FlyingFathead/audio-bitsqueezer)
 
 All-in-one tool that:
 1) Reads any audio file format supported by FFmpeg (via pydub).
@@ -34,7 +34,6 @@ Dependencies:
  - ffmpeg (installed system-wide, must be on PATH)
  - pydub (pip install pydub)
 """
-
 
 import sys
 import os

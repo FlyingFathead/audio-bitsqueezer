@@ -30,8 +30,8 @@
 ## Installation
 
 ```bash
-git clone https://github.com/FlyingFathead/bitsqueezer.git
-cd bitsqueezer
+git clone https://github.com/FlyingFathead/audio-bitsqueezer.git
+cd audio-bitsqueezer
 pip install pydub
 ```
 
@@ -134,7 +134,7 @@ For more information on the MSSIAH mode, please see i.e. [MSSIAH Wave-Player Man
 
 ## License
 
-At least for now, use it for whatever. If you adapt it somewhere, a quick nod back here to [**FlyingFathead/bitsqueezer**](https://github.com/FlyingFathead/bitsqueezer) would be nice.
+At least for now, use it for whatever. If you adapt it somewhere, a quick nod back here to [**FlyingFathead/bitsqueezer**](https://github.com/FlyingFathead/audio-bitsqueezer) would be nice.
 
 **Note:** I'm in no way affiliated with the MSSIAH cartridge or any of their other hardware projects. Please refer to their manuals and customer support if you have any issues with your MSSIAH hardware.
 
