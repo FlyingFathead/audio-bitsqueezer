@@ -1,0 +1,126 @@
+# bitsqueezer
+
+**bitsqueezer** is a Python utility that converts modern audio files (MP3, WAV, FLAC, etc.) into:
+1. **Raw 4-bit nibble data** -- great for old-school tricks on machines like the Commodore 64 (volume-register "digis").
+2. **MSSIAH-compatible 8-bit WAV** at 6 kHz -- the perfect output format if you're using the Commodore 64 [MSSIAH](https://mssiah.com/) cartridge.
+
+## How It Works
+
+- **Decode**: Uses [FFmpeg](https://ffmpeg.org/) via [pydub](https://github.com/jiaaro/pydub) to handle nearly any input format, starting from (but not limited to) MP3, WAV, AIFF, FLAC, etc.  
+- **Downmix**: Automatically converts multi-channel audio to mono.  
+- **Resample**: Choose a sample rate (default is 8000 Hz for 4-bit mode; forced 6 kHz in MSSIAH mode).  
+- **Quantize & Pack** (4-bit mode): Maps 16-bit samples to 4 bits (0–15), then packs two samples into each byte for raw nibble data.  
+- **8-bit MSSIAH Mode**: Forces the audio to 6 kHz, 8-bit mono WAV. You can rename it on disk (e.g., `MYFILE    .WAV.PRG`) and load directly into MSSIAH Wave-Player.  
+- **Write**: Outputs either `.raw` (for 4-bit nibble data) or `.wav` (for MSSIAH).  
+
+**NOTE:** Keep your audio samples short; i.e. MSSIAH, according to its [manual](https://mssiah.com/files/MSSIAH_WavePlayer.pdf), accepts a maximum of approx. 5.5sec long samples.
+
+## Requirements
+
+- **Python 3.6+** (older versions *might* work; no guarantees though).  
+- [**FFmpeg**](https://ffmpeg.org/download.html) installed and on your PATH.  
+  - Linux (Debian/Ubuntu): `sudo apt-get install ffmpeg`  
+  - macOS: `brew install ffmpeg`  
+  - Windows: Download from [ffmpeg.org](https://ffmpeg.org/) and ensure `ffmpeg.exe` is in your PATH.  
+- **pydub** library  
+  ```bash
+  pip install pydub
+  ```
+
+## Installation
+
+```bash
+git clone https://github.com/FlyingFathead/bitsqueezer.git
+cd bitsqueezer
+pip install pydub
+```
+
+Make sure FFmpeg is installed and accessible.
+
+## Usage
+
+```
+python bitsqueezer.py <infile> [--mode 4bit|mssiah] [--rate SAMPLE_RATE] [--out OUTPUT_FILE]
+```
+
+### Modes
+
+1. **4bit**: Creates raw 4-bit nibble data.  
+2. **mssiah**: Creates an 8-bit, 6 kHz WAV suitable for MSSIAH Wave-Player disk import.
+
+### Examples
+
+1. **Default 4-bit** (no `--out`, rate=8000 Hz):
+   ```bash
+   python bitsqueezer.py my_audio.wav --mode 4bit
+   ```
+   - Outputs `my_audio_4bit_8000hz.raw`.
+
+2. **Specify a sample rate** (still 4bit):
+   ```bash
+   python bitsqueezer.py my_audio.mp3 --mode 4bit --rate 11025
+   ```
+   - Outputs `my_audio_4bit_11025hz.raw`.
+
+3. **MSSIAH mode** (6 kHz, 8-bit WAV):
+   ```bash
+   python bitsqueezer.py my_audio.flac --mode mssiah
+   ```
+   - Outputs `my_audio_mssiah_6khz.wav`.
+
+4. **Fully specify output**:
+   ```bash
+   python bitsqueezer.py input.wav --mode mssiah --out final_mssiah.wav
+   ```
+   - Writes an 8-bit, 6 kHz WAV to `final_mssiah.wav`.
+
+Once you have your file:
+- **4-bit `.raw`**: Ideal for direct volume-register playback on retro hardware.  
+- **MSSIAH `.wav`**: Rename to the MSSIAH-required `.WAV.PRG` format, put it on disk (or Savyour/USB), and import it into the MSSIAH Wave-Player.
+
+## 4-Bit Raw Output Details
+
+- **Samples**: Each sample is 4 bits (0–15).  
+- **Two samples/byte**: Low nibble is first, high nibble is second.  
+- **No header**: It’s plain data. You must track the sample rate yourself.
+
+## FAQ
+
+### Why 4 bits?
+Some retro hardware (Commodore 64, etc.) can’t do real 8-bit PCM easily. Tricks using the SID’s volume register only allow ~4 bits of resolution. In many use cases, **bitsqueezer** handles that conversion for you.
+
+You can also use it to pre-process your audio to be used with the [MSSIAH](https://mssiah.com/) cartridge for the Commodore 64. As the MSSIAH cartridge [manual](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) puts it _(quote)_:
+
+> _"Why use your latest "bit crusher" plugin when you can let the real machines do the work? Why do people still hook up old samplers and drum machines in their modern facilities? Well, they want that special "sound". The coloration of the C64 SID chip is an important building block in their music just like that hand crafted guitar is to Eric Clapton. Not to mention the PR value of using a 25 year old Commodore computer in your music that just cannot be beaten. It raises more than one eyebrow and gives that extra flavor to your sound at the same time."_
+
+### Will it sound great?
+Of course -- I mean, of course not -- I mean, that's completely subjective. Nonetheless, welcome to the "high fidelity" of 4-bit audio. 
+
+You wanted retro, you got retro. No refunds!
+
+### Why MSSIAH mode?
+**It's just a bonus feature.** You don't necessarily _need_ a MSSIAH hardware cartridge to transfer the audio data to (i.e.) your Commodore 64, but if you're using a MSSIAH cartridge, it can help in that.
+
+I highly do recommend using the MSSIAH cartridge if you're using original C64 hardware; it's one of the best retro audio cartridges ever made. MSSIAH's Wave-Player requires 8-bit/6 kHz WAV on import when using data over MIDI. The MSSIAH mode in bitsqueezer will help you in that.
+
+MSSIAH handles further processing to suit its compatibility internally, so the 4-bit squeeze step isn't required in MSSIAH use.
+
+For more information on the MSSIAH mode, please see i.e. [MSSIAH Wave-Player Manual (PDF)](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) or the [C64 MSSIAH Cartridge](https://mssiah.com/) website.
+
+## License
+
+At least for now, use it for whatever. If you adapt it somewhere, a quick nod back here to [**FlyingFathead/bitsqueezer**](https://github.com/FlyingFathead/bitsqueezer) would be nice.
+
+**Note:** I'm in no way affiliated with the MSSIAH cartridge or any of their other hardware projects. Please refer to their manuals and customer support if you have any issues with your MSSIAH hardware.
+
+Have fun!
+
+## Contributing & Contact
+
+Pull requests, bug reports, and suggestions welcome. If you want advanced dithering, different sample packing, or feature expansions, open an issue or PR.
+
+You can contact me via email from `flyingfathead@protonmail.com` or on Twitter/X: [@horsperg](https://x.com/horsperg)
+
+---
+
+_**Enjoy the squeeze!**_
