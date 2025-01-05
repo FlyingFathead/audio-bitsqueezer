@@ -1,6 +1,10 @@
+# audio files
 *.raw
 *.mp3
 *.wav
 *.ogg
 *.flac
 
+# audio dirs
+audio/
+audio/**
