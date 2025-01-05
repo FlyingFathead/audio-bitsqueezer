@@ -1,6 +1,6 @@
-# bitsqueezer
+# audio-bitsqueezer
 
-**bitsqueezer** is a Python utility that converts modern audio files (MP3, WAV, FLAC, etc.) into:
+**audio-bitsqueezer** (or just **bitsqueezer**) is a Python utility that converts modern audio files (MP3, WAV, FLAC, etc.) into:
 1. **Raw 4-bit nibble data** -- great for old-school tricks on machines like the Commodore 64 (volume-register "digis").
 2. **MSSIAH-compatible 8-bit WAV** at 6 kHz -- the perfect output format if you're using the Commodore 64 [MSSIAH](https://mssiah.com/) cartridge.
 
