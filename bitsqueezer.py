@@ -35,11 +35,31 @@ Dependencies:
  - pydub (pip install pydub)
 """
 
+
 import sys
 import os
+import subprocess
 import argparse
 import struct
 from pydub import AudioSegment
+
+def check_ffmpeg_installed():
+    """
+    Check if 'ffmpeg' is accessible on the system PATH.
+    Exits if not found or if calling `ffmpeg -version` fails.
+    """
+    try:
+        # Attempt to run `ffmpeg -version` and capture output
+        proc = subprocess.run(
+            ["ffmpeg", "-version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True  # Raises CalledProcessError on non-zero return
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        print("ERROR: 'ffmpeg' not found or not working. Please install or add it to PATH.")
+        sys.exit(1)
 
 def warn_if_too_long(audio_duration, max_sec=5.5):
     """
@@ -120,6 +140,9 @@ def write_mssiah_wav(audio, out_filename, max_sec=5.5):
     print(f"    8-bit, 6 kHz, mono, duration ~{audio.duration_seconds:.2f}s")
 
 def main():
+
+    check_ffmpeg_installed()  # <--- Check for ffmpeg first!
+
     parser = argparse.ArgumentParser(
         description="Convert audio for old-school usage: 4-bit RAW or MSSIAH-friendly 8-bit WAV."
     )
