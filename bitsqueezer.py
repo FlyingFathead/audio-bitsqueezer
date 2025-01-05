@@ -119,10 +119,11 @@ def do_maximize(audio, target_dbfs=0.0):
     change_in_dB = target_dbfs - audio.max_dBFS
     return audio.apply_gain(change_in_dB)
 
-def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0):
+def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bit=True):
     """
     Convert 'audio' to 4-bit raw nibble data, pack 2 nibbles/byte,
     then write to 'out_filename'.
+    If stretch_4bit=True, we also rescale the nibble distribution to [0..15].
     """
     # ensure mono
     if audio.channels != 1:
@@ -145,11 +146,25 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0):
     nibbles = []
     for s in samples:
         # clamp
-        if s < -32768: s = -32768
-        elif s > 32767: s = 32767
+        if s < -32768: 
+            s = -32768
+        elif s > 32767: 
+            s = 32767
         shifted = s + 32768  # [0..65535]
         val_4bit = (shifted >> 12) & 0x0F  # [0..15]
         nibbles.append(val_4bit)
+
+    if stretch_4bit:
+        # "Quick fix": rescale nibble distribution => [0..15]
+        nmin = min(nibbles) if nibbles else 0
+        nmax = max(nibbles) if nibbles else 15
+        if nmax > nmin:
+            span = nmax - nmin
+            for i in range(len(nibbles)):
+                x = nibbles[i] - nmin
+                # scale up to 0..15
+                x = int((x * 15) / span + 0.5)
+                nibbles[i] = max(0, min(15, x))
 
     # pack 2 nibbles per byte
     packed = bytearray()
@@ -163,6 +178,8 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0):
 
     print(f"[4bit RAW] {out_filename} written.")
     print(f"Sample rate: {sample_rate} Hz, total samples: {len(samples)}, packed bytes: {len(packed)}")
+    if stretch_4bit:
+        print("    (Applied nibble distribution stretch to [0..15].)")
 
 def write_mssiah_wav(audio, out_filename, max_sec=5.5):
     """
@@ -207,6 +224,10 @@ def main():
     parser.add_argument("--maximize-level", type=float, default=None,
                         help="Target dBFS for maximizing. Default is 0.0 dBFS if not specified.")
 
+    # new switch to disable nibble stretching:
+    parser.add_argument("--no-stretch-4bit", action="store_true",
+                        help="Disable 'quick fix' nibble distribution stretch to [0..15]. (Default: ON)")
+
     args = parser.parse_args()
 
     # Overwrite the global defaults if user provided flags:
@@ -250,7 +271,10 @@ def main():
 
     # 3) Then produce either 4-bit raw or MSSIAH WAV
     if args.mode == "4bit":
-        write_4bit_raw(audio, out_name, sample_rate=args.rate, max_sec=args.max)
+        # by default we do nibble stretching, disable if user says --no-stretch-4bit
+        stretch_4bit = not args.no_stretch_4bit
+        write_4bit_raw(audio, out_name, sample_rate=args.rate, max_sec=args.max,
+                       stretch_4bit=stretch_4bit)
     else:
         write_mssiah_wav(audio, out_name, max_sec=args.max)
 
