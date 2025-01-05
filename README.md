@@ -84,8 +84,6 @@ Once you have your file:
 - **Two samples/byte**: Low nibble is first, high nibble is second.  
 - **No header**: It’s plain data. You must track the sample rate yourself.
 
-Below is an example **“Testing on PC”** section you can insert into your README. It explains why simply playing the 4-bit `.raw` file at its “nominal” sample rate sounds off-pitch, and how to workaround that if you really want to preview it:
-
 ## Testing on PC
 
 If you try to play the **4-bit `.raw`** file directly on your modern computer (e.g., using `aplay`, `ffplay`, or another raw PCM player), you may notice the audio sounds **twice as fast** (i.e., higher-pitched). This is because each byte in the 4-bit file actually holds **two** samples (the low nibble and the high nibble). Standard PCM players assume “one sample per byte,” so they race through the data at double speed.
