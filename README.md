@@ -84,6 +84,35 @@ Once you have your file:
 - **Two samples/byte**: Low nibble is first, high nibble is second.  
 - **No header**: It’s plain data. You must track the sample rate yourself.
 
+Below is an example **“Testing on PC”** section you can insert into your README. It explains why simply playing the 4-bit `.raw` file at its “nominal” sample rate sounds off-pitch, and how to workaround that if you really want to preview it:
+
+## Testing on PC
+
+If you try to play the **4-bit `.raw`** file directly on your modern computer (e.g., using `aplay`, `ffplay`, or another raw PCM player), you may notice the audio sounds **twice as fast** (i.e., higher-pitched). This is because each byte in the 4-bit file actually holds **two** samples (the low nibble and the high nibble). Standard PCM players assume “one sample per byte,” so they race through the data at double speed.
+
+### Quick Workaround
+
+You can lower the playback rate to half in your player so each byte lasts twice as long. For example, if you originally targeted **8000 Hz** with bitsqueezer, try:
+
+   ```bash
+   aplay -f U8 -r 4000 -c 1 my_audio_4bit_8000hz.raw
+   ```
+
+This “slows down” playback to the correct pitch (albeit still interpreting 4-bit data as if it’s 8-bit amplitude, which might sound crunchy or quiet).
+
+### Proper Approach
+
+If you need a more faithful preview, you must **unpack** the 4-bit file into a standard 8-bit or 16-bit PCM file first. That involves:
+
+1. Reading each byte.  
+2. Extracting the lower nibble (bits 0–3) and the higher nibble (bits 4–7).  
+3. Mapping each nibble to an 8-bit range (e.g., multiplying by 16 if you want 0..15 to become 0..240).  
+4. Writing out two bytes (or two 8-bit samples) per original byte.
+
+Once you’ve done this unpacking, you can play the resulting full 8-bit PCM file at the **original** sample rate (e.g., 8000 Hz) without pitch issues. This doesn’t add any fidelity (it’s still 4-bit data at heart), but it helps standard players recognize one sample per byte.
+
+If you’re ultimately loading this file on a Commodore 64 (or other retro device) for volume-register playback, none of this matters—because your own code will already be reading each nibble from each byte properly at the correct rate. This is purely a convenience for quick testing on a modern computer.  
+
 ## FAQ
 
 ### Why 4 bits?
