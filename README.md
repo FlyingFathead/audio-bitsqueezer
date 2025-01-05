@@ -126,9 +126,7 @@ That's completely subjective. Nonetheless, welcome to the "high fidelity" of 4-b
 
 The MSSIAH cartridge is a great tool if you're using original C64 hardware as its data-over-MIDI functionality is extremely well-suited for creating C64 "digis". 
 
-MSSIAH's Wave-Player requires 8-bit/6 kHz WAV on import when using data over MIDI. The MSSIAH mode in bitsqueezer will help you in that.
-
-MSSIAH handles further processing to suit its compatibility internally, so the 4-bit squeeze step isn't required in MSSIAH use.
+MSSIAH's Wave-Player requires 8-bit/6 kHz WAV on import when using data over MIDI. MSSIAH handles further processing to suit its compatibility internally, note that the 4-bit squeeze step isn't required in MSSIAH use.
 
 For more information on the MSSIAH mode, please see i.e. [MSSIAH Wave-Player Manual (PDF)](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) or the [C64 MSSIAH Cartridge](https://mssiah.com/) website.
 
