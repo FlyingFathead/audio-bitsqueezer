@@ -12,3 +12,6 @@ audio/**
 # old junk
 old/
 old/**
+
+# tests
+out.prg
