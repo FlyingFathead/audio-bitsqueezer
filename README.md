@@ -119,7 +119,7 @@ Some retro hardware (Commodore 64, etc.) can’t do real 8-bit PCM easily. Trick
 You can also use it to pre-process your audio to be used with the [MSSIAH](https://mssiah.com/) cartridge for the Commodore 64. See the MSSIAH cartridge [Wave-Player manual](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) for more info.
 
 ### Will it sound great?
-What do you think? Welcome to the "high fidelity" of 4-bit audio. You wanted retro, you got retro. No refunds!
+Well, welcome to the "high fidelity" of 4-bit audio. You wanted retro, you got retro. No refunds!
 
 ### Why MSSIAH mode?
 **It's just a bonus feature.** You don't necessarily _need_ a MSSIAH hardware cartridge to transfer the audio data to (i.e.) your Commodore 64, but if you're using a MSSIAH cartridge, it can help in that.
