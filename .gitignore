@@ -8,3 +8,7 @@
 # audio dirs
 audio/
 audio/**
+
+# old junk
+old/
+old/**
