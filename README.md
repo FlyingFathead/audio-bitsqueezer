@@ -109,7 +109,7 @@ If you need a more faithful preview, you must **unpack** the 4-bit file into a s
 
 Once you’ve done this unpacking, you can play the resulting full 8-bit PCM file at the **original** sample rate (e.g., 8000 Hz) without pitch issues. This doesn’t add any fidelity (it’s still 4-bit data at heart), but it helps standard players recognize one sample per byte.
 
-If you’re ultimately loading this file on a Commodore 64 (or other retro device) for volume-register playback, none of this matters—because your own code will already be reading each nibble from each byte properly at the correct rate. This is purely a convenience for quick testing on a modern computer.  
+If you’re ultimately loading this file on a Commodore 64 (or other retro device) for volume-register playback, none of this matters—because your own code will (hopefully) already be reading each nibble from each byte properly at the correct rate. This is purely a convenience for quick testing on a modern computer.
 
 ## FAQ
 
