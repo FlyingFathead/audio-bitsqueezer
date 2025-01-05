@@ -116,19 +116,17 @@ If you’re ultimately loading this file on a Commodore 64 (or other retro devic
 ### Why 4 bits?
 Some retro hardware (Commodore 64, etc.) can’t do real 8-bit PCM easily. Tricks using the SID’s volume register only allow ~4 bits of resolution. In many use cases, **bitsqueezer** handles that conversion for you.
 
-You can also use it to pre-process your audio to be used with the [MSSIAH](https://mssiah.com/) cartridge for the Commodore 64. As the MSSIAH cartridge [manual](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) puts it _(quote)_:
-
-> _"Why use your latest "bit crusher" plugin when you can let the real machines do the work? Why do people still hook up old samplers and drum machines in their modern facilities? Well, they want that special "sound". The coloration of the C64 SID chip is an important building block in their music just like that hand crafted guitar is to Eric Clapton. Not to mention the PR value of using a 25 year old Commodore computer in your music that just cannot be beaten. It raises more than one eyebrow and gives that extra flavor to your sound at the same time."_
+You can also use it to pre-process your audio to be used with the [MSSIAH](https://mssiah.com/) cartridge for the Commodore 64. See the MSSIAH cartridge [Wave-Player manual](https://mssiah.com/files/MSSIAH_WavePlayer.pdf) for more info.
 
 ### Will it sound great?
-Of course -- I mean, of course not -- I mean, that's completely subjective. Nonetheless, welcome to the "high fidelity" of 4-bit audio. 
-
-You wanted retro, you got retro. No refunds!
+That's completely subjective. Nonetheless, welcome to the "high fidelity" of 4-bit audio. You wanted retro, you got retro. No refunds!
 
 ### Why MSSIAH mode?
 **It's just a bonus feature.** You don't necessarily _need_ a MSSIAH hardware cartridge to transfer the audio data to (i.e.) your Commodore 64, but if you're using a MSSIAH cartridge, it can help in that.
 
-I highly do recommend using the MSSIAH cartridge if you're using original C64 hardware; it's one of the best retro audio cartridges ever made. MSSIAH's Wave-Player requires 8-bit/6 kHz WAV on import when using data over MIDI. The MSSIAH mode in bitsqueezer will help you in that.
+The MSSIAH cartridge is a great tool if you're using original C64 hardware as its data-over-MIDI functionality is extremely well-suited for creating C64 "digis". 
+
+MSSIAH's Wave-Player requires 8-bit/6 kHz WAV on import when using data over MIDI. The MSSIAH mode in bitsqueezer will help you in that.
 
 MSSIAH handles further processing to suit its compatibility internally, so the 4-bit squeeze step isn't required in MSSIAH use.
 
