@@ -10,7 +10,7 @@ MAX_PRG_SIZE = 40000
 # This file must have a 2-byte load address and the code that
 # references the label where the sample is appended.
 # PLAYER_BIN = "player.bin"
-PLAYER_BIN = "./prg/holy_sample.prg"
+PLAYER_BIN = "./prg/loopplay.prg"
 
 def main():
     if len(sys.argv) < 2:
