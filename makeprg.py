@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # makeprg.py
+# v0.11
+
 import sys
 import os
 import argparse

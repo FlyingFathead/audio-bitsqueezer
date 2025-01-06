@@ -167,4 +167,22 @@ Pull requests, bug reports, suggestions welcome.
 Email: `flyingfathead@protonmail.com`  
 Twitter/X: [@horsperg](https://x.com/horsperg)
 
+## Changelog
+
+- `v0.11` - added single/dual nibble switches to `makeprg.py`
+
+   You can i.e. **force single nibble:**
+   ```bash
+   python makeprg.py sound_4bit.raw --singlenibble
+   ```
+
+   Or, **force dual nibble:**
+   ```bash
+   python makeprg.py sound_4bit.raw --dualnibble
+   ```
+
+- `v0.1` - initial release
+
+---
+
 **_Enjoy the squeeze_!**
