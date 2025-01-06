@@ -9,8 +9,14 @@ MAX_PRG_SIZE = 40000
 # The minimal pre-assembled player file you want to merge with.
 # This file must have a 2-byte load address and the code that
 # references the label where the sample is appended.
-# PLAYER_BIN = "player.bin"
-PLAYER_BIN = "./prg/loopplay.prg"
+# PLAYER_BIN = "player_binaryfile.prg"
+
+# some examples include:
+# PLAYER_BIN = "./prg/loopplay.prg"
+# PLAYER_BIN = "./prg/loopplay_16k.prg"
+# PLAYER_BIN = "./prg/loopplay_32k.prg"
+# PLAYER_BIN = "./prg/loopplay_64k.prg"
+PLAYER_BIN = "./prg/loopplay_dualnibbles.prg"
 
 def main():
     if len(sys.argv) < 2:
