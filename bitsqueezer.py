@@ -19,7 +19,7 @@ Also warns if the final audio exceeds a user-set "max duration"
 
 Usage examples:
 ---------------
-    # Produce a 4-bit raw file at default 8000 Hz (trim silence + maximize both ON):
+    # Produce a 4-bit raw file at default 4000 Hz (trim silence + maximize both ON):
     python bitsqueezer.py input.wav --mode 4bit
 
     # Same, but specify sample rate = 11025, disable trimming:
@@ -51,10 +51,12 @@ from pydub.silence import detect_silence
 # -------------------------
 # Default global variables
 # -------------------------
-TRIM_SILENCE = True     # If True, leading/trailing silence is trimmed
-MAXIMIZE     = True     # If True, we apply a simple "normalize" to a dB level
-MAXIMIZE_LEVEL = 0.0    # Default target loudness in dBFS (0.0 => full scale)
-STRETCH_4BIT = True     # If True, we apply nibble distribution stretching to [0..15]
+TRIM_SILENCE   = True     # If True, leading/trailing silence is trimmed
+MAXIMIZE       = True     # If True, we apply a simple "normalize" to a dB level
+MAXIMIZE_LEVEL = 0.0      # Default target loudness in dBFS (0.0 => full scale)
+STRETCH_4BIT   = True     # If True, we apply nibble distribution stretching to [0..15]
+
+DEFAULT_4BIT_RATE = 4000  # The default sample rate for 4-bit mode
 # -------------------------
 
 def check_ffmpeg_installed():
@@ -107,7 +109,7 @@ def trim_silence(audio, silence_thresh=-50.0, keep_silence=200):
 
     start_cut = max(0, leading_sil - keep_silence)
     end_cut   = min(len(audio), trailing_sil + keep_silence)
-    trimmed = audio[start_cut:end_cut]
+    trimmed   = audio[start_cut:end_cut]
     return trimmed if trimmed.duration_seconds > 0 else audio
 
 def do_maximize(audio, target_dbfs=0.0):
@@ -123,7 +125,6 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bi
     """
     Convert 'audio' to 4-bit raw nibble data, pack 2 nibbles/byte,
     then write to 'out_filename'.
-
     If stretch_4bit=True, we also rescale the nibble distribution to [0..15].
     """
     # ensure mono
@@ -162,8 +163,9 @@ def write_4bit_raw(audio, out_filename, sample_rate, max_sec=9999.0, stretch_4bi
             span = nmax - nmin
             for i in range(len(nibbles)):
                 x = nibbles[i] - nmin
-                x = int((x * 15) / span + 0.5)  # scale up to 0..15
-                nibbles[i] = max(0, min(15, x))
+                x = int((x * 15) / span + 0.5)
+                x = max(0, min(15, x))
+                nibbles[i] = x
 
     # pack 2 nibbles per byte
     packed = bytearray()
@@ -210,8 +212,8 @@ def main():
     parser.add_argument("--out", help="Output file name")
     parser.add_argument("--mode", choices=["4bit","mssiah"], default="4bit",
                         help="Output mode: '4bit' raw nibbles or 'mssiah' 8-bit 6kHz WAV (default: 4bit)")
-    parser.add_argument("--rate", type=int, default=8000,
-                        help="Sample rate for 4bit mode (default: 8000). Ignored in mssiah mode.")
+    parser.add_argument("--rate", type=int, default=DEFAULT_4BIT_RATE,
+                        help=f"Sample rate for 4bit mode (default: {DEFAULT_4BIT_RATE}). Ignored in mssiah mode.")
     parser.add_argument("--max", type=float, default=5.5,
                         help="Warn if final audio length > this many seconds (default: 5.5).")
 
@@ -239,7 +241,6 @@ def main():
     if args.maximize_level is not None:
         MAXIMIZE_LEVEL = args.maximize_level
 
-    # Overwrite STRETCH_4BIT
     if args.no_stretch_4bit:
         STRETCH_4BIT = False
 
@@ -274,8 +275,13 @@ def main():
 
     # 3) Produce either 4-bit raw or MSSIAH WAV
     if args.mode == "4bit":
-        write_4bit_raw(audio, out_name, sample_rate=args.rate, max_sec=args.max,
-                       stretch_4bit=STRETCH_4BIT)
+        write_4bit_raw(
+            audio,
+            out_name,
+            sample_rate=args.rate,
+            max_sec=args.max,
+            stretch_4bit=STRETCH_4BIT
+        )
     else:
         write_mssiah_wav(audio, out_name, max_sec=args.max)
 
