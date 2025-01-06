@@ -169,6 +169,8 @@ Twitter/X: [@horsperg](https://x.com/horsperg)
 
 ## Changelog
 
+- `v0.12` - telephone filter in `bitsqueezer.py` w/ `--telco` switch
+
 - `v0.11` - added single/dual nibble switches to `makeprg.py`
 
    You can i.e. **force single nibble:**
