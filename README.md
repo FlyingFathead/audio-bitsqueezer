@@ -4,7 +4,7 @@
 
 1. **Raw 4-bit nibble data** — great for old-school tricks on machines like the Commodore 64 (volume-register “digis”).  
 2. **MSSIAH-compatible 8-bit WAV** at 6 kHz — the perfect output format if you're using the Commodore 64 [MSSIAH](https://mssiah.com/) cartridge.
-3. **A complete `.prg`** — by merging the 4-bit `.raw` output with a minimal player via `maketoprg.py`, so you can run it directly on the C64.
+3. **A complete `.prg`** — by merging the 4-bit `.raw` output with a minimal player via `maketoprg.py`, so you can run it directly on the C64 or an emulator, using its audio output.
 
 ## How It Works
 
