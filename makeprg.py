@@ -17,9 +17,10 @@ MAX_PRG_SIZE = 40000
 #   PLAYER_BIN = "./prg/loopplay_16k.prg"
 #   PLAYER_BIN = "./prg/loopplay_32k.prg"
 #   PLAYER_BIN = "./prg/loopplay_64k.prg"
-PLAYER_BIN = "./prg/loopplay_dualnibbles.prg"
+#   PLAYER_BIN = "./prg/loopplay_dualnibbles.prg"
 # Uncomment this line if your default preference is single nibble:
 # PLAYER_BIN = "./prg/loopplay_singleNibble.prg"
+PLAYER_BIN = "./prg/loopplay_singleNibble_zp.prg"
 
 def main():
     parser = argparse.ArgumentParser(
